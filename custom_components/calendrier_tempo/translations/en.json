@@ -1,0 +1,78 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Calendrier Tempo EDF",
+        "description": "Adds the EDF Tempo color of today and tomorrow (official EDF colors), the D+2 to D+5 forecasts and the remaining red and white days, from the free public API of calendrier-tempo.fr. No account or key required. Only the color published by EDF is authoritative: forecasts are indicative."
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to reach calendrier-tempo.fr. Check your internet connection and try again in a few minutes."
+    },
+    "abort": {
+      "already_configured": "Calendrier Tempo EDF is already configured.",
+      "single_instance_allowed": "Calendrier Tempo EDF is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "couleur_aujourd_hui": {
+        "name": "Color today",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        }
+      },
+      "couleur_demain": {
+        "name": "Color tomorrow",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        }
+      },
+      "prevision_j2": {
+        "name": "Forecast D+2",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        }
+      },
+      "prevision_j3": {
+        "name": "Forecast D+3",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        }
+      },
+      "prevision_j4": {
+        "name": "Forecast D+4",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        }
+      },
+      "prevision_j5": {
+        "name": "Forecast D+5",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        }
+      },
+      "prochain_jour_rouge": {
+        "name": "Next red day forecast"
+      },
+      "jours_rouges_restants": {
+        "name": "Red days remaining"
+      },
+      "jours_blancs_restants": {
+        "name": "White days remaining"
+      }
+    }
+  }
+}

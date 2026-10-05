@@ -1,0 +1,78 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Calendrier Tempo EDF",
+        "description": "Ajoute la couleur Tempo du jour et de demain (couleurs officielles EDF), les prévisions de J+2 à J+5 et les jours rouges et blancs restants, à partir de l'API publique et gratuite de calendrier-tempo.fr. Aucun compte ni clé nécessaire. Seule la couleur publiée par EDF fait foi : les prévisions sont indicatives."
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de joindre calendrier-tempo.fr. Vérifiez votre connexion internet et réessayez dans quelques minutes."
+    },
+    "abort": {
+      "already_configured": "Calendrier Tempo EDF est déjà configuré.",
+      "single_instance_allowed": "Calendrier Tempo EDF est déjà configuré."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "couleur_aujourd_hui": {
+        "name": "Couleur aujourd'hui",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        }
+      },
+      "couleur_demain": {
+        "name": "Couleur demain",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        }
+      },
+      "prevision_j2": {
+        "name": "Prévision J+2",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        }
+      },
+      "prevision_j3": {
+        "name": "Prévision J+3",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        }
+      },
+      "prevision_j4": {
+        "name": "Prévision J+4",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        }
+      },
+      "prevision_j5": {
+        "name": "Prévision J+5",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        }
+      },
+      "prochain_jour_rouge": {
+        "name": "Prochain jour rouge prévu"
+      },
+      "jours_rouges_restants": {
+        "name": "Jours rouges restants"
+      },
+      "jours_blancs_restants": {
+        "name": "Jours blancs restants"
+      }
+    }
+  }
+}
