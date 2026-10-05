@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
 from homeassistant import config_entries
@@ -9,7 +11,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.calendrier_tempo.const import API_BASE_URL, DOMAIN, NAME
+from custom_components.calendrier_tempo.const import (
+    API_BASE_URL,
+    DOMAIN,
+    NAME,
+    USER_AGENT,
+    VERSION,
+)
 
 
 async def test_user_flow_creates_entry(hass: HomeAssistant, mock_api: Any) -> None:
@@ -43,3 +51,12 @@ async def test_single_instance(hass: HomeAssistant) -> None:
     )
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] in ("already_configured", "single_instance_allowed")
+
+
+def test_manifest_version_matches_constant() -> None:
+    """Une seule version partout : manifest, appareil et User-Agent."""
+    manifest = json.loads(
+        (Path(__file__).parents[1] / "custom_components/calendrier_tempo/manifest.json").read_text()
+    )
+    assert manifest["version"] == VERSION
+    assert USER_AGENT == f"ha-calendrier-tempo/{VERSION}"

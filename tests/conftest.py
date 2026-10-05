@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
+from freezegun.api import FrozenDateTimeFactory
 import pytest
 
 from custom_components.calendrier_tempo.const import API_BASE_URL
@@ -44,18 +47,41 @@ def prediction(day: str, color: str, **extra: Any) -> dict[str, Any]:
     return base
 
 
+BLEU_PROBAS: dict[str, Any] = {
+    "probabilite_bleu": 0.9,
+    "probabilite_blanc": 0.08,
+    "probabilite_rouge": 0.02,
+}
+
+# Horizon complet comme en production : J0 à J+15 (16 jours), 2026-12-07 = lundi.
 PREDICTIONS: dict[str, Any] = {
     "status": "ok",
+    "generated_at": "2026-12-07T07:30:00+01:00",
     "predictions": [
-        prediction("2026-12-07", "BLANC", confirmed=True),
-        prediction("2026-12-08", "BLEU", confirmed=True),
+        prediction("2026-12-07", "BLANC", confirmed=True, horizon="J0"),
+        prediction("2026-12-08", "BLEU", confirmed=True, horizon="J-1"),
         prediction("2026-12-09", "BLANC"),
         prediction("2026-12-10", "ROUGE"),
         prediction("2026-12-11", "ROUGE"),
         prediction("2026-12-12", "BLANC"),
-        prediction("2026-12-13", "BLEU"),
+        prediction("2026-12-13", "BLEU", **BLEU_PROBAS),
+        prediction("2026-12-14", "BLEU", **BLEU_PROBAS),
+        prediction("2026-12-15", "ROUGE", probabilite_rouge=0.41, horizon="J-8"),
+        *(
+            prediction(f"2026-12-{day}", "BLEU", **BLEU_PROBAS, horizon=f"J-{day - 7}")
+            for day in range(16, 23)
+        ),
     ],
 }
+
+
+PARIS = ZoneInfo("Europe/Paris")
+
+
+@pytest.fixture(autouse=True)
+def paris_monday_morning(freezer: FrozenDateTimeFactory) -> None:
+    """Horloge figée au lundi 7 décembre 2026, 9 h à Paris (date des réponses ci-dessus)."""
+    freezer.move_to(datetime(2026, 12, 7, 9, 0, tzinfo=PARIS))
 
 
 @pytest.fixture(autouse=True)

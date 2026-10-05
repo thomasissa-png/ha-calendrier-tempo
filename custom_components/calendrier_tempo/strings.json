@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Calendrier Tempo EDF",
-        "description": "Adds the EDF Tempo color of today and tomorrow (official EDF colors), the D+2 to D+5 forecasts and the remaining red and white days, from the free public API of calendrier-tempo.fr. No account or key required. Only the color published by EDF is authoritative: forecasts are indicative."
+        "description": "Adds the EDF Tempo color of today and tomorrow (official EDF colors), forecasts up to 15 days ahead (D+2 to D+5: most reliable range; D+6 to D+15: indicative trend), a calendar of white and red days, the next red and white day and the remaining days, from the free public API of calendrier-tempo.fr. No account or key required. Only the color published by EDF is authoritative."
       }
     },
     "error": {
@@ -22,6 +22,41 @@
           "bleu": "Blue",
           "blanc": "White",
           "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "couleur_actuelle": {
+        "name": "Current color",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "periode": {
+        "name": "Tariff period",
+        "state": {
+          "hp": "Peak hours",
+          "hc": "Off-peak hours"
         }
       },
       "couleur_demain": {
@@ -30,6 +65,16 @@
           "bleu": "Blue",
           "blanc": "White",
           "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
         }
       },
       "prevision_j2": {
@@ -38,6 +83,16 @@
           "bleu": "Blue",
           "blanc": "White",
           "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
         }
       },
       "prevision_j3": {
@@ -46,6 +101,16 @@
           "bleu": "Blue",
           "blanc": "White",
           "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
         }
       },
       "prevision_j4": {
@@ -54,6 +119,16 @@
           "bleu": "Blue",
           "blanc": "White",
           "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
         }
       },
       "prevision_j5": {
@@ -62,16 +137,253 @@
           "bleu": "Blue",
           "blanc": "White",
           "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
         }
       },
+      "prevision_j6": {
+        "name": "Forecast D+6 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prevision_j7": {
+        "name": "Forecast D+7 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prevision_j8": {
+        "name": "Forecast D+8 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prevision_j9": {
+        "name": "Forecast D+9 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prevision_j10": {
+        "name": "Forecast D+10 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prevision_j11": {
+        "name": "Forecast D+11 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prevision_j12": {
+        "name": "Forecast D+12 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prevision_j13": {
+        "name": "Forecast D+13 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prevision_j14": {
+        "name": "Forecast D+14 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prevision_j15": {
+        "name": "Forecast D+15 (indicative)",
+        "state": {
+          "bleu": "Blue",
+          "blanc": "White",
+          "rouge": "Red"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "previsions_15_jours": {
+        "name": "Red days in the next 15 days",
+        "unit_of_measurement": "days"
+      },
       "prochain_jour_rouge": {
-        "name": "Next red day forecast"
+        "name": "Next red day forecast",
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
+      },
+      "prochain_jour_blanc": {
+        "name": "Next white day forecast",
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Reliability",
+            "state": {
+              "officielle": "Official (EDF)",
+              "fiable": "Most reliable range",
+              "indicative": "Indicative trend"
+            }
+          }
+        }
       },
       "jours_rouges_restants": {
-        "name": "Red days remaining"
+        "name": "Red days remaining",
+        "unit_of_measurement": "days",
+        "state_attributes": {
+          "source": {
+            "name": "Source",
+            "state": {
+              "edf": "EDF counters",
+              "calcul": "Computed from official colors"
+            }
+          }
+        }
       },
       "jours_blancs_restants": {
-        "name": "White days remaining"
+        "name": "White days remaining",
+        "unit_of_measurement": "days",
+        "state_attributes": {
+          "source": {
+            "name": "Source",
+            "state": {
+              "edf": "EDF counters",
+              "calcul": "Computed from official colors"
+            }
+          }
+        }
       }
     }
   }

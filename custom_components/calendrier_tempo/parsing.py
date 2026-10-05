@@ -6,14 +6,24 @@ Module sans dépendance Home Assistant : fonctions pures, testables seules.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Any
+
+from .const import PEAK_END_HOUR, PERIOD_OFF_PEAK, PERIOD_PEAK, TEMPO_DAY_START_HOUR
 
 # Couleurs exposées par les capteurs (minuscules, stables pour les automatisations).
 COLOR_BLEU = "bleu"
 COLOR_BLANC = "blanc"
 COLOR_ROUGE = "rouge"
 COLORS = (COLOR_BLEU, COLOR_BLANC, COLOR_ROUGE)
+
+# Fiabilité d'un jour, alignée sur le site (page méthodologie) : couleur publiée
+# par EDF, prévision jusqu'à J+5 (J+2 à J+5 = zone mesurée la plus fiable),
+# prévision J+6 à J+15 (tendance indicative).
+FIABILITE_OFFICIELLE = "officielle"
+FIABILITE_FIABLE = "fiable"
+FIABILITE_INDICATIVE = "indicative"
+HORIZON_FIABLE_MAX = 5
 
 # Champs d'une prévision repris tels quels en attributs, uniquement s'ils existent.
 PREDICTION_ATTRIBUTES = (
@@ -51,6 +61,27 @@ def parse_date(value: Any) -> date | None:
         return None
 
 
+def tempo_day(now_paris: datetime) -> date:
+    """Journée Tempo en cours (heure de Paris) : celle de la veille avant 6 h."""
+    return (now_paris - timedelta(hours=TEMPO_DAY_START_HOUR)).date()
+
+
+def period_for(now_paris: datetime) -> str:
+    """Heures pleines de 6 h à 22 h, heures creuses de 22 h à 6 h (heure de Paris)."""
+    if TEMPO_DAY_START_HOUR <= now_paris.hour < PEAK_END_HOUR:
+        return PERIOD_PEAK
+    return PERIOD_OFF_PEAK
+
+
+def fiabilite_for(offset: int, official: bool) -> str:
+    """Fiabilité d'un jour selon qu'il est officiel et son éloignement."""
+    if official:
+        return FIABILITE_OFFICIELLE
+    if offset <= HORIZON_FIABLE_MAX:
+        return FIABILITE_FIABLE
+    return FIABILITE_INDICATIVE
+
+
 @dataclass(frozen=True)
 class DayColor:
     """Couleur officielle EDF d'un jour (aujourd'hui ou demain)."""
@@ -74,6 +105,49 @@ class Prediction:
 
 
 @dataclass(frozen=True)
+class ForecastDay:
+    """Un jour de l'horizon : couleur officielle EDF si connue, sinon prévision."""
+
+    date: date
+    offset: int
+    color: str
+    official: bool
+    attributes: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def fiabilite(self) -> str:
+        return fiabilite_for(self.offset, self.official)
+
+    def probability(self, color: str) -> float | None:
+        """Probabilité (0 à 1) d'une couleur ; 1 ou 0 pour un jour officiel."""
+        if self.official:
+            return 1.0 if color == self.color else 0.0
+        value = self.attributes.get(f"probabilite_{color}")
+        if isinstance(value, bool) or not isinstance(value, int | float):
+            return None
+        return float(value)
+
+    def as_dict(self) -> dict[str, Any]:
+        """Résumé d'un jour (attribut `previsions` du capteur 15 jours)."""
+        item: dict[str, Any] = {
+            "date": self.date.isoformat(),
+            "jour": self.offset,
+            "couleur": self.color,
+            "officielle": self.official,
+            "fiabilite": self.fiabilite,
+        }
+        for color in COLORS:
+            item[f"probabilite_{color}"] = self.probability(color)
+        return item
+
+
+# Origine des jours restants : compteurs EDF, sinon calcul du site à partir
+# des couleurs officielles enregistrées.
+SOURCE_EDF = "edf"
+SOURCE_CALCUL = "calcul"
+
+
+@dataclass(frozen=True)
 class Remaining:
     """Jours restants dans la saison en cours."""
 
@@ -83,6 +157,7 @@ class Remaining:
     total_blanc: int | None = None
     season_start: date | None = None
     season_end: date | None = None
+    source: str | None = None
 
 
 @dataclass(frozen=True)
@@ -94,15 +169,47 @@ class TempoData:
     tomorrow: DayColor
     remaining: Remaining
     predictions: tuple[Prediction, ...]
+    days: tuple[ForecastDay, ...] = ()
+    generated_at: str | None = None
+    yesterday: DayColor = field(default_factory=lambda: DayColor(date=None, color=None))
+    # Vrai si /api/today ou /api/tomorrow a renvoyé une autre date que prévu
+    # (copie en cache juste après minuit, copie de secours) : relance rapide.
+    stale: bool = False
+
+    def official_day(self, day: date) -> DayColor:
+        """Couleur officielle connue pour ce jour (hier, aujourd'hui ou demain)."""
+        for known in (self.today, self.tomorrow, self.yesterday):
+            if known.date == day and known.color is not None:
+                return known
+        return DayColor(date=day, color=None)
+
+    def current_day(self, now_paris: datetime) -> DayColor:
+        """Couleur qui s'applique maintenant : journée Tempo de 6 h à 6 h."""
+        return self.official_day(tempo_day(now_paris))
 
     def prediction_for_offset(self, days: int) -> Prediction | None:
-        """Prévision pour J+days (par rapport à la date de référence)."""
+        """Prévision brute de l'API pour J+days (par rapport à la date de référence)."""
         target = self.reference_date + timedelta(days=days)
         return next((p for p in self.predictions if p.date == target), None)
 
-    def next_red(self) -> Prediction | None:
-        """Premier jour rouge, officiel ou prévu, à partir d'aujourd'hui."""
-        return next_red_day(self.predictions, self.today, self.tomorrow, self.reference_date)
+    def day_for_offset(self, days: int) -> ForecastDay | None:
+        """Jour J+days de l'horizon, couleur officielle prioritaire."""
+        return next((d for d in self.days if d.offset == days), None)
+
+    def next_color(self, color: str) -> ForecastDay | None:
+        """Premier jour de cette couleur (officielle ou prévue) à partir d'aujourd'hui."""
+        return next((d for d in self.days if d.color == color), None)
+
+    def next_red(self) -> ForecastDay | None:
+        return self.next_color(COLOR_ROUGE)
+
+    def next_white(self) -> ForecastDay | None:
+        return self.next_color(COLOR_BLANC)
+
+    @property
+    def horizon_jours(self) -> int:
+        """Nombre de jours couverts après aujourd'hui (15 en temps normal)."""
+        return max((d.offset for d in self.days), default=0)
 
 
 def _require_dict(payload: Any, endpoint: str) -> dict[str, Any]:
@@ -134,23 +241,49 @@ def _as_int(value: Any) -> int | None:
     return None
 
 
+def _counters(value: Any) -> tuple[int | None, int | None]:
+    value = value if isinstance(value, dict) else {}
+    return _as_int(value.get("ROUGE")), _as_int(value.get("BLANC"))
+
+
 def parse_remaining(payload: Any) -> Remaining:
-    """Lit /api/remaining."""
+    """Lit /api/remaining : compteurs EDF (`edf_official`) en priorité, calcul du site sinon."""
     data = _require_dict(payload, "remaining")
     if data.get("status", "ok") != "ok":
         return Remaining(rouge=None, blanc=None)
-    remaining = data.get("remaining")
     totals = data.get("totals")
-    remaining = remaining if isinstance(remaining, dict) else {}
     totals = totals if isinstance(totals, dict) else {}
+    rouge, blanc = _counters(data.get("edf_official"))
+    source = SOURCE_EDF
+    if rouge is None or blanc is None:
+        rouge, blanc = _counters(data.get("remaining"))
+        source = SOURCE_CALCUL
     return Remaining(
-        rouge=_as_int(remaining.get("ROUGE")),
-        blanc=_as_int(remaining.get("BLANC")),
+        rouge=rouge,
+        blanc=blanc,
         total_rouge=_as_int(totals.get("ROUGE")),
         total_blanc=_as_int(totals.get("BLANC")),
         season_start=parse_date(data.get("season_start")),
         season_end=parse_date(data.get("season_end")),
+        source=source if rouge is not None or blanc is not None else None,
     )
+
+
+def parse_history(payload: Any) -> dict[date, str]:
+    """Lit /api/history : couleurs officielles des derniers jours."""
+    data = _require_dict(payload, "history")
+    items = data.get("history")
+    colors: dict[date, str] = {}
+    if not isinstance(items, list):
+        return colors
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        day = parse_date(item.get("date"))
+        color = normalize_color(item.get("couleur_reelle"))
+        if day is not None and color is not None:
+            colors[day] = color
+    return colors
 
 
 def parse_predictions(payload: Any) -> tuple[Prediction, ...]:
@@ -172,33 +305,43 @@ def parse_predictions(payload: Any) -> tuple[Prediction, ...]:
     return tuple(sorted(result.values(), key=lambda p: p.date))
 
 
-def next_red_day(
+def build_forecast_days(
     predictions: tuple[Prediction, ...],
     today: DayColor,
     tomorrow: DayColor,
     reference_date: date,
-) -> Prediction | None:
-    """Premier jour rouge à partir de reference_date.
+) -> tuple[ForecastDay, ...]:
+    """Horizon complet à partir de reference_date, jour par jour.
 
-    La couleur officielle EDF (aujourd'hui, demain) prime sur la prévision.
+    La couleur officielle EDF (/api/today, /api/tomorrow) prime sur la prévision ;
+    une entrée marquée `confirmed` par l'API est aussi officielle.
     """
-    official = {
-        day.date: day.color for day in (today, tomorrow) if day.date and day.color
-    }
-    candidates: dict[date, Prediction] = {
-        p.date: p for p in predictions if p.date >= reference_date
-    }
+    official = {d.date: d.color for d in (today, tomorrow) if d.date and d.color}
+    days: dict[date, ForecastDay] = {}
+    for p in predictions:
+        if p.date < reference_date:
+            continue
+        days[p.date] = ForecastDay(
+            date=p.date,
+            offset=(p.date - reference_date).days,
+            color=p.color,
+            official=p.confirmed,
+            attributes=dict(p.attributes),
+        )
     for day, color in official.items():
         if day < reference_date:
             continue
-        previous = candidates.get(day)
+        previous = days.get(day)
         attributes = dict(previous.attributes) if previous else {}
         attributes["confirmed"] = True
-        candidates[day] = Prediction(date=day, color=color, attributes=attributes)
-    return next(
-        (candidates[d] for d in sorted(candidates) if candidates[d].color == COLOR_ROUGE),
-        None,
-    )
+        days[day] = ForecastDay(
+            date=day,
+            offset=(day - reference_date).days,
+            color=color,
+            official=True,
+            attributes=attributes,
+        )
+    return tuple(days[d] for d in sorted(days))
 
 
 def build_tempo_data(
@@ -206,15 +349,35 @@ def build_tempo_data(
     tomorrow_payload: Any,
     remaining_payload: Any,
     predictions_payload: Any,
-    fallback_date: date,
+    current_date: date,
 ) -> TempoData:
-    """Assemble les 4 réponses. La date de référence est celle d'EDF si connue."""
-    today = parse_day(today_payload, "today")
-    tomorrow = parse_day(tomorrow_payload, "tomorrow")
+    """Assemble les 4 réponses autour de la date du jour à Paris (`current_date`).
+
+    Chaque couleur officielle est rangée selon SA date : une réponse en retard
+    (cache juste après minuit, copie de secours de plusieurs jours) ne fait
+    jamais passer la couleur de la veille pour celle d'aujourd'hui.
+    """
+    parsed = (parse_day(today_payload, "today"), parse_day(tomorrow_payload, "tomorrow"))
+    expected = (current_date, current_date + timedelta(days=1))
+    stale = any(d.date is not None and d.date != e for d, e in zip(parsed, expected, strict=True))
+    by_date = {d.date: d for d in parsed if d.date is not None and d.color is not None}
+    today = by_date.get(current_date, DayColor(date=current_date, color=None))
+    tomorrow = by_date.get(expected[1], DayColor(date=expected[1], color=None))
+    # Réponse « aujourd'hui » de la veille (en retard) : couleur d'hier, utile jusqu'à 6 h.
+    previous = current_date - timedelta(days=1)
+    yesterday = by_date.get(previous, DayColor(date=previous, color=None))
+    predictions = parse_predictions(predictions_payload)
+    generated_at = (
+        predictions_payload.get("generated_at") if isinstance(predictions_payload, dict) else None
+    )
     return TempoData(
-        reference_date=today.date or fallback_date,
+        reference_date=current_date,
         today=today,
         tomorrow=tomorrow,
         remaining=parse_remaining(remaining_payload),
-        predictions=parse_predictions(predictions_payload),
+        predictions=predictions,
+        days=build_forecast_days(predictions, today, tomorrow, current_date),
+        generated_at=generated_at if isinstance(generated_at, str) and generated_at else None,
+        yesterday=yesterday,
+        stale=stale,
     )

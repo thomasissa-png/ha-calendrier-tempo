@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Calendrier Tempo EDF",
-        "description": "Ajoute la couleur Tempo du jour et de demain (couleurs officielles EDF), les prévisions de J+2 à J+5 et les jours rouges et blancs restants, à partir de l'API publique et gratuite de calendrier-tempo.fr. Aucun compte ni clé nécessaire. Seule la couleur publiée par EDF fait foi : les prévisions sont indicatives."
+        "description": "Ajoute la couleur Tempo du jour et de demain (couleurs officielles EDF), les prévisions jusqu'à 15 jours (J+2 à J+5 : zone la plus fiable ; J+6 à J+15 : tendance indicative), un calendrier des jours blancs et rouges, le prochain jour rouge et blanc et les jours restants, à partir de l'API publique et gratuite de calendrier-tempo.fr. Aucun compte ni clé nécessaire. Seule la couleur publiée par EDF fait foi."
       }
     },
     "error": {
@@ -22,6 +22,41 @@
           "bleu": "Bleu",
           "blanc": "Blanc",
           "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "couleur_actuelle": {
+        "name": "Couleur actuelle",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "periode": {
+        "name": "Période tarifaire",
+        "state": {
+          "hp": "Heures pleines",
+          "hc": "Heures creuses"
         }
       },
       "couleur_demain": {
@@ -30,6 +65,16 @@
           "bleu": "Bleu",
           "blanc": "Blanc",
           "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
         }
       },
       "prevision_j2": {
@@ -38,6 +83,16 @@
           "bleu": "Bleu",
           "blanc": "Blanc",
           "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
         }
       },
       "prevision_j3": {
@@ -46,6 +101,16 @@
           "bleu": "Bleu",
           "blanc": "Blanc",
           "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
         }
       },
       "prevision_j4": {
@@ -54,6 +119,16 @@
           "bleu": "Bleu",
           "blanc": "Blanc",
           "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
         }
       },
       "prevision_j5": {
@@ -62,16 +137,253 @@
           "bleu": "Bleu",
           "blanc": "Blanc",
           "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
         }
       },
+      "prevision_j6": {
+        "name": "Prévision J+6 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prevision_j7": {
+        "name": "Prévision J+7 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prevision_j8": {
+        "name": "Prévision J+8 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prevision_j9": {
+        "name": "Prévision J+9 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prevision_j10": {
+        "name": "Prévision J+10 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prevision_j11": {
+        "name": "Prévision J+11 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prevision_j12": {
+        "name": "Prévision J+12 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prevision_j13": {
+        "name": "Prévision J+13 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prevision_j14": {
+        "name": "Prévision J+14 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prevision_j15": {
+        "name": "Prévision J+15 (indicative)",
+        "state": {
+          "bleu": "Bleu",
+          "blanc": "Blanc",
+          "rouge": "Rouge"
+        },
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "previsions_15_jours": {
+        "name": "Jours rouges sur 15 jours",
+        "unit_of_measurement": "jours"
+      },
       "prochain_jour_rouge": {
-        "name": "Prochain jour rouge prévu"
+        "name": "Prochain jour rouge prévu",
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
+      },
+      "prochain_jour_blanc": {
+        "name": "Prochain jour blanc prévu",
+        "state_attributes": {
+          "fiabilite": {
+            "name": "Fiabilité",
+            "state": {
+              "officielle": "Officielle (EDF)",
+              "fiable": "Zone la plus fiable",
+              "indicative": "Tendance indicative"
+            }
+          }
+        }
       },
       "jours_rouges_restants": {
-        "name": "Jours rouges restants"
+        "name": "Jours rouges restants",
+        "unit_of_measurement": "jours",
+        "state_attributes": {
+          "source": {
+            "name": "Source",
+            "state": {
+              "edf": "Compteurs EDF",
+              "calcul": "Calcul à partir des couleurs officielles"
+            }
+          }
+        }
       },
       "jours_blancs_restants": {
-        "name": "Jours blancs restants"
+        "name": "Jours blancs restants",
+        "unit_of_measurement": "jours",
+        "state_attributes": {
+          "source": {
+            "name": "Source",
+            "state": {
+              "edf": "Compteurs EDF",
+              "calcul": "Calcul à partir des couleurs officielles"
+            }
+          }
+        }
       }
     }
   }

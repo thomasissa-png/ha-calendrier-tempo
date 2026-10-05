@@ -1,0 +1,169 @@
+{
+  "entity": {
+    "calendar": {
+      "calendrier": {
+        "default": "mdi:calendar-month"
+      }
+    },
+    "sensor": {
+      "couleur_aujourd_hui": {
+        "default": "mdi:calendar-today",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "couleur_actuelle": {
+        "default": "mdi:home-lightning-bolt-outline",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "periode": {
+        "default": "mdi:clock-outline",
+        "state": {
+          "hp": "mdi:white-balance-sunny",
+          "hc": "mdi:weather-night"
+        }
+      },
+      "couleur_demain": {
+        "default": "mdi:calendar-arrow-right",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j2": {
+        "default": "mdi:calendar-question",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j3": {
+        "default": "mdi:calendar-question",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j4": {
+        "default": "mdi:calendar-question",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j5": {
+        "default": "mdi:calendar-question",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j6": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j7": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j8": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j9": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j10": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j11": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j12": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j13": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j14": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "prevision_j15": {
+        "default": "mdi:calendar-search",
+        "state": {
+          "bleu": "mdi:flash-outline",
+          "blanc": "mdi:flash",
+          "rouge": "mdi:flash-alert"
+        }
+      },
+      "previsions_15_jours": {
+        "default": "mdi:calendar-range"
+      },
+      "prochain_jour_rouge": {
+        "default": "mdi:calendar-alert"
+      },
+      "prochain_jour_blanc": {
+        "default": "mdi:calendar-blank-outline"
+      },
+      "jours_rouges_restants": {
+        "default": "mdi:calendar-remove"
+      },
+      "jours_blancs_restants": {
+        "default": "mdi:calendar-blank"
+      }
+    }
+  }
+}
