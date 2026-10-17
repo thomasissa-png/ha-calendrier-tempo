@@ -267,10 +267,12 @@ def parse_day(payload: Any, endpoint: str = "today") -> DayColor:
     if data.get("status") != "ok":
         return DayColor(date=parse_date(data.get("date")), color=None)
     code = data.get("code")
+    color = normalize_color(data.get("couleur"))
     return DayColor(
         date=parse_date(data.get("date")),
-        color=normalize_color(data.get("couleur")),
-        code=code if isinstance(code, int) and not isinstance(code, bool) else None,
+        color=color,
+        # Code 0 (couleur inconnue) ou sans couleur lisible : jamais exposé comme couleur.
+        code=code if color and isinstance(code, int) and not isinstance(code, bool) else None,
         tarif=parse_tariff(data.get("tarif")),
     )
 
