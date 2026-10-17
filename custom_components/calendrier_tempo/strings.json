@@ -59,6 +59,32 @@
           "hc": "Off-peak hours"
         }
       },
+      "prix_kwh_actuel": {
+        "name": "Current kWh price",
+        "state_attributes": {
+          "periode": {
+            "name": "Tariff period",
+            "state": {
+              "hp": "Peak hours",
+              "hc": "Off-peak hours"
+            }
+          },
+          "couleur": {
+            "name": "Color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "grille": {
+            "name": "Price grid"
+          },
+          "date_effet": {
+            "name": "Effective date"
+          }
+        }
+      },
       "couleur_demain": {
         "name": "Color tomorrow",
         "state": {

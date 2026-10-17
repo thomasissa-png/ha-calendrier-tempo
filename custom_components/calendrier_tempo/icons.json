@@ -29,6 +29,9 @@
           "hc": "mdi:weather-night"
         }
       },
+      "prix_kwh_actuel": {
+        "default": "mdi:currency-eur"
+      },
       "couleur_demain": {
         "default": "mdi:calendar-arrow-right",
         "state": {

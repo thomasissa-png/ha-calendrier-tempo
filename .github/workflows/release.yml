@@ -1,0 +1,32 @@
+# Publie la release GitHub complète de la version du manifest (HACS lit les releases).
+# GitHub : Actions -> Release -> « Run workflow » (branche main). Notes : .github/release-notes/v<version>.md
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Create the release of the manifest version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="$(python3 -c 'import json; print(json.load(open("custom_components/calendrier_tempo/manifest.json"))["version"])')"
+          notes=".github/release-notes/v${version}.md"
+          test -f "$notes" || { echo "Notes absentes : $notes"; exit 1; }
+          if gh release view "v${version}" >/dev/null 2>&1; then
+            echo "La release v${version} existe déjà : rien à faire."
+            exit 0
+          fi
+          title="$(sed -n '1s/^# //p' "$notes" | grep -v '^Nouveautés$' || true)"
+          gh release create "v${version}" --target "${GITHUB_SHA}" --latest \
+            --title "v${version}${title:+ : $title}" --notes-file "$notes"

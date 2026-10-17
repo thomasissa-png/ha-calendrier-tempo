@@ -87,7 +87,7 @@ async def test_sensors_ok(hass: HomeAssistant, mock_api: Any) -> None:
 
     # Requêtes identifiées par le User-Agent de l'intégration.
     _method, _url, _data, headers = mock_api.mock_calls[0]
-    assert headers["User-Agent"] == "ha-calendrier-tempo/0.2.0"
+    assert headers["User-Agent"] == "ha-calendrier-tempo/0.3.0"
 
 
 async def test_tomorrow_unavailable_and_no_red(hass: HomeAssistant, aioclient_mock: Any) -> None:

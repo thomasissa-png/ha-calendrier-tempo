@@ -7,7 +7,7 @@ from typing import Final
 
 DOMAIN: Final = "calendrier_tempo"
 NAME: Final = "Calendrier Tempo EDF"
-VERSION: Final = "0.2.0"
+VERSION: Final = "0.3.0"
 
 SITE_URL: Final = "https://www.calendrier-tempo.fr/"
 API_BASE_URL: Final = "https://www.calendrier-tempo.fr/api"
@@ -47,6 +47,8 @@ TEMPO_DAY_START_HOUR: Final = 6
 PEAK_END_HOUR: Final = 22
 PERIOD_PEAK: Final = "hp"
 PERIOD_OFF_PEAK: Final = "hc"
+# Minuit : changement de date civile (la journée Tempo, elle, continue jusqu'à 6 h).
+MIDNIGHT_HOUR: Final = 0
 
 ATTRIBUTION: Final = (
     "Couleurs officielles EDF, prévisions indicatives de calendrier-tempo.fr"

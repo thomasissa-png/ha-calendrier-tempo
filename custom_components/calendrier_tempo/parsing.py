@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
+import math
 from typing import Any
 
 from .const import PEAK_END_HOUR, PERIOD_OFF_PEAK, PERIOD_PEAK, TEMPO_DAY_START_HOUR
@@ -83,12 +84,39 @@ def fiabilite_for(offset: int, official: bool) -> str:
 
 
 @dataclass(frozen=True)
+class Tariff:
+    """Prix du kWh (EUR TTC) d'une couleur : heures pleines et heures creuses."""
+
+    hp: float
+    hc: float
+
+    def price(self, period: str) -> float:
+        return self.hp if period == PERIOD_PEAK else self.hc
+
+    def as_dict(self) -> dict[str, float]:
+        return {PERIOD_PEAK: self.hp, PERIOD_OFF_PEAK: self.hc}
+
+
+@dataclass(frozen=True)
+class TariffGrid:
+    """Grille complète publiée par /api/today (champ `tarifs`)."""
+
+    colors: dict[str, Tariff]
+    date_effet: date | None = None
+
+    def as_dict(self) -> dict[str, dict[str, float]]:
+        return {color: self.colors[color].as_dict() for color in COLORS if color in self.colors}
+
+
+@dataclass(frozen=True)
 class DayColor:
     """Couleur officielle EDF d'un jour (aujourd'hui ou demain)."""
 
     date: date | None
     color: str | None
     code: int | None = None
+    # Prix du kWh de cette couleur (champ `tarif` de l'API), absent des anciennes réponses.
+    tarif: Tariff | None = None
 
 
 @dataclass(frozen=True)
@@ -172,6 +200,8 @@ class TempoData:
     days: tuple[ForecastDay, ...] = ()
     generated_at: str | None = None
     yesterday: DayColor = field(default_factory=lambda: DayColor(date=None, color=None))
+    # Grille de prix du kWh, None tant que l'API ne la fournit pas.
+    tarifs: TariffGrid | None = None
     # Vrai si /api/today ou /api/tomorrow a renvoyé une autre date que prévu
     # (copie en cache juste après minuit, copie de secours) : relance rapide.
     stale: bool = False
@@ -186,6 +216,19 @@ class TempoData:
     def current_day(self, now_paris: datetime) -> DayColor:
         """Couleur qui s'applique maintenant : journée Tempo de 6 h à 6 h."""
         return self.official_day(tempo_day(now_paris))
+
+    def day_tariff(self, day: DayColor) -> Tariff | None:
+        """Prix HP/HC d'un jour officiel : champ `tarif`, sinon grille selon sa couleur."""
+        if day.tarif is not None:
+            return day.tarif
+        if day.color is None or self.tarifs is None:
+            return None
+        return self.tarifs.colors.get(day.color)
+
+    def current_price(self, now_paris: datetime) -> float | None:
+        """Prix du kWh qui s'applique maintenant (journée Tempo et période HP/HC)."""
+        tariff = self.day_tariff(self.current_day(now_paris))
+        return tariff.price(period_for(now_paris)) if tariff else None
 
     def prediction_for_offset(self, days: int) -> Prediction | None:
         """Prévision brute de l'API pour J+days (par rapport à la date de référence)."""
@@ -224,11 +267,50 @@ def parse_day(payload: Any, endpoint: str = "today") -> DayColor:
     if data.get("status") != "ok":
         return DayColor(date=parse_date(data.get("date")), color=None)
     code = data.get("code")
+    color = normalize_color(data.get("couleur"))
     return DayColor(
         date=parse_date(data.get("date")),
-        color=normalize_color(data.get("couleur")),
-        code=code if isinstance(code, int) and not isinstance(code, bool) else None,
+        color=color,
+        # Code 0 (couleur inconnue) ou sans couleur lisible : jamais exposé comme couleur.
+        code=code if color and isinstance(code, int) and not isinstance(code, bool) else None,
+        tarif=parse_tariff(data.get("tarif")),
     )
+
+
+def _as_price(value: Any) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        return None
+    price = float(value)
+    return price if math.isfinite(price) and price >= 0 else None
+
+
+def parse_tariff(value: Any) -> Tariff | None:
+    """Lit {"hp": 0.1654, "hc": 0.1356}. None si absent ou incomplet."""
+    if not isinstance(value, dict):
+        return None
+    hp, hc = _as_price(value.get("hp")), _as_price(value.get("hc"))
+    if hp is None or hc is None:
+        return None
+    return Tariff(hp=hp, hc=hc)
+
+
+def parse_tariff_grid(payload: Any) -> TariffGrid | None:
+    """Lit le champ `tarifs` de /api/today. None si absent (ancienne réponse) ou vide."""
+    if not isinstance(payload, dict) or payload.get("status") != "ok":
+        return None
+    tarifs = payload.get("tarifs")
+    couleurs = tarifs.get("couleurs") if isinstance(tarifs, dict) else None
+    if not isinstance(couleurs, dict):
+        return None
+    colors: dict[str, Tariff] = {}
+    for key, value in couleurs.items():
+        color = normalize_color(key)
+        tariff = parse_tariff(value)
+        if color is not None and tariff is not None:
+            colors[color] = tariff
+    if not colors:
+        return None
+    return TariffGrid(colors=colors, date_effet=parse_date(tarifs.get("date_effet")))
 
 
 def _as_int(value: Any) -> int | None:
@@ -380,4 +462,5 @@ def build_tempo_data(
         generated_at=generated_at if isinstance(generated_at, str) and generated_at else None,
         yesterday=yesterday,
         stale=stale,
+        tarifs=parse_tariff_grid(today_payload),
     )

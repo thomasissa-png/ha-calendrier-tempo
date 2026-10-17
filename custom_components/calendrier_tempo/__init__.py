@@ -17,6 +17,7 @@ from .const import (
     DAY_REFRESH_HOUR,
     DAY_REFRESH_MINUTE,
     DOMAIN,
+    MIDNIGHT_HOUR,
     PEAK_END_HOUR,
     TEMPO_DAY_START_HOUR,
 )
@@ -96,9 +97,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: TempoConfigEntry) -> boo
         ANNOUNCEMENT_REFRESH_MINUTE,
         random.randint(0, 59),
     )
-    # Début de la journée Tempo (6 h) et fin des heures pleines (22 h) : couleur
-    # actuelle et période recalculées sans interroger l'API.
-    for hour in (TEMPO_DAY_START_HOUR, PEAK_END_HOUR):
+    # Minuit, début de la journée Tempo (6 h) et fin des heures pleines (22 h) :
+    # couleur actuelle, période et prix du kWh recalculés sans interroger l'API.
+    for hour in (MIDNIGHT_HOUR, TEMPO_DAY_START_HOUR, PEAK_END_HOUR):
         _track_paris_time(hass, entry, coordinator.async_update_listeners, hour, 0)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

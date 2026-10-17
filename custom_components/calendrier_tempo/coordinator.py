@@ -33,7 +33,17 @@ from .const import (
     TIMEZONE,
     USER_AGENT,
 )
-from .parsing import ApiDataError, DayColor, TempoData, build_tempo_data, parse_history
+from .parsing import (
+    COLORS,
+    ApiDataError,
+    DayColor,
+    Tariff,
+    TariffGrid,
+    TempoData,
+    build_forecast_days,
+    build_tempo_data,
+    parse_history,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -99,7 +109,12 @@ class TempoCoordinator(DataUpdateCoordinator[TempoData]):
         # Couleurs officielles déjà vues (hier et aujourd'hui), pour la journée
         # Tempo qui court jusqu'à 6 h le lendemain.
         self._official_colors: dict[date, str] = {}
+        # Prix du kWh (champ `tarif`) de ces mêmes jours, quand l'API l'a donné.
+        self._official_tarifs: dict[date, Tariff] = {}
         self._short_retry_done = False
+        # Dernière grille de prix reçue : gardée 24 h au plus si /api/today répond
+        # sans elle (couleur en attente, source EDF indisponible).
+        self._last_tarifs: tuple[TariffGrid, datetime] | None = None
 
     def _plan_next(self, complete: bool) -> None:
         """Cycle normal si tout va bien, sinon une relance unique à 5 minutes."""
@@ -140,6 +155,26 @@ class TempoCoordinator(DataUpdateCoordinator[TempoData]):
         if yesterday in colors:
             self._official_colors[yesterday] = colors[yesterday]
 
+    def _with_known_color(self, day: DayColor) -> DayColor:
+        """Une réponse sans couleur (attente, source EDF indisponible) n'efface
+        jamais une couleur officielle déjà lue pour cette date (recette 2026-10-17,
+        point 3.12 ; même règle que withKnownColor de l'intégration Gladys).
+
+        La date vient du calcul local (date de Paris), jamais de la réponse : une
+        réponse « unavailable » n'a pas de date et son `code` 0 n'est pas une couleur.
+        """
+        if day.color is not None or day.date is None:
+            return day
+        known = self._official_colors.get(day.date)
+        if known is None:
+            return day
+        return DayColor(
+            date=day.date,
+            color=known,
+            code=COLORS.index(known) + 1,
+            tarif=self._official_tarifs.get(day.date),
+        )
+
     async def _async_update_data(self) -> TempoData:
         # Requêtes séquentielles : 4 appels toutes les 30 minutes, l'API reste ménagée.
         now = dt_util.now(PARIS_TZ)
@@ -158,19 +193,45 @@ class TempoCoordinator(DataUpdateCoordinator[TempoData]):
             self._plan_next(complete=False)
             raise UpdateFailed(str(err)) from err
 
+        known_today = self._with_known_color(data.today)
+        known_tomorrow = self._with_known_color(data.tomorrow)
+        if (known_today, known_tomorrow) != (data.today, data.tomorrow):
+            data = replace(
+                data,
+                today=known_today,
+                tomorrow=known_tomorrow,
+                days=build_forecast_days(
+                    data.predictions, known_today, known_tomorrow, data.reference_date
+                ),
+            )
+
         yesterday = now.date() - timedelta(days=1)
         for day in (data.yesterday, data.today, data.tomorrow):
             if day.date is not None and day.color is not None:
                 self._official_colors[day.date] = day.color
+                if day.tarif is not None:
+                    self._official_tarifs[day.date] = day.tarif
         if now.hour < TEMPO_DAY_START_HOUR and yesterday not in self._official_colors:
             await self._async_yesterday(yesterday)
         self._official_colors = {
             d: c for d, c in self._official_colors.items() if d >= yesterday
         }
+        self._official_tarifs = {
+            d: t
+            for d, t in self._official_tarifs.items()
+            if d >= yesterday and d in self._official_colors
+        }
+        tarifs = data.tarifs
+        utc_now = dt_util.utcnow()
+        if tarifs is not None:
+            self._last_tarifs = (tarifs, utc_now)
+        elif self._last_tarifs and utc_now - self._last_tarifs[1] <= STALE_PAYLOAD_MAX_AGE:
+            tarifs = self._last_tarifs[0]
         if data.stale:
             _LOGGER.info("Réponse de la veille reçue (cache), nouvelle lecture dans 5 minutes")
         self._plan_next(complete=not missing and not data.stale)
         return replace(
             data,
             yesterday=DayColor(date=yesterday, color=self._official_colors.get(yesterday)),
+            tarifs=tarifs,
         )

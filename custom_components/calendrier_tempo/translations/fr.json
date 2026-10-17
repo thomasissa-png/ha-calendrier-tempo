@@ -59,6 +59,32 @@
           "hc": "Heures creuses"
         }
       },
+      "prix_kwh_actuel": {
+        "name": "Prix du kWh actuel",
+        "state_attributes": {
+          "periode": {
+            "name": "Période tarifaire",
+            "state": {
+              "hp": "Heures pleines",
+              "hc": "Heures creuses"
+            }
+          },
+          "couleur": {
+            "name": "Couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "grille": {
+            "name": "Grille tarifaire"
+          },
+          "date_effet": {
+            "name": "Date d'effet"
+          }
+        }
+      },
       "couleur_demain": {
         "name": "Couleur demain",
         "state": {
