@@ -33,7 +33,14 @@ from .const import (
     TIMEZONE,
     USER_AGENT,
 )
-from .parsing import ApiDataError, DayColor, TempoData, build_tempo_data, parse_history
+from .parsing import (
+    ApiDataError,
+    DayColor,
+    TariffGrid,
+    TempoData,
+    build_tempo_data,
+    parse_history,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -100,6 +107,9 @@ class TempoCoordinator(DataUpdateCoordinator[TempoData]):
         # Tempo qui court jusqu'à 6 h le lendemain.
         self._official_colors: dict[date, str] = {}
         self._short_retry_done = False
+        # Dernière grille de prix reçue : gardée 24 h au plus si /api/today répond
+        # sans elle (couleur en attente, source EDF indisponible).
+        self._last_tarifs: tuple[TariffGrid, datetime] | None = None
 
     def _plan_next(self, complete: bool) -> None:
         """Cycle normal si tout va bien, sinon une relance unique à 5 minutes."""
@@ -167,10 +177,17 @@ class TempoCoordinator(DataUpdateCoordinator[TempoData]):
         self._official_colors = {
             d: c for d, c in self._official_colors.items() if d >= yesterday
         }
+        tarifs = data.tarifs
+        utc_now = dt_util.utcnow()
+        if tarifs is not None:
+            self._last_tarifs = (tarifs, utc_now)
+        elif self._last_tarifs and utc_now - self._last_tarifs[1] <= STALE_PAYLOAD_MAX_AGE:
+            tarifs = self._last_tarifs[0]
         if data.stale:
             _LOGGER.info("Réponse de la veille reçue (cache), nouvelle lecture dans 5 minutes")
         self._plan_next(complete=not missing and not data.stale)
         return replace(
             data,
             yesterday=DayColor(date=yesterday, color=self._official_colors.get(yesterday)),
+            tarifs=tarifs,
         )

@@ -42,5 +42,11 @@ async def async_get_config_entry_diagnostics(
             "source": remaining.source,
         },
         "generee_le": data.generated_at,
+        "tarifs": {
+            "date_effet": data.tarifs.date_effet.isoformat() if data.tarifs.date_effet else None,
+            "grille": data.tarifs.as_dict(),
+        }
+        if data.tarifs
+        else None,
         "previsions": [day.as_dict() for day in data.days],
     }

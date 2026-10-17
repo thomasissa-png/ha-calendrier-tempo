@@ -8,8 +8,8 @@
   "documentation": "https://www.calendrier-tempo.fr/domotique",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://www.calendrier-tempo.fr/domotique/documentation",
+  "issue_tracker": "https://github.com/thomasissa-png/ha-calendrier-tempo/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.2.0"
+  "version": "0.3.0"
 }

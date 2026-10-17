@@ -13,6 +13,7 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
+from homeassistant.const import UnitOfEnergy
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util import dt as dt_util
@@ -41,7 +42,12 @@ from .parsing import (
 # Une seule source de données : pas de parallélisme à limiter côté plateforme.
 PARALLEL_UPDATES = 0
 
-StateValue = str | int | date | None
+StateValue = str | int | float | date | None
+
+# Unité acceptée par le tableau de bord Énergie (« entité avec le prix actuel ») :
+# elle doit se terminer par « /kWh ». Pas de device_class MONETARY, qui exige une
+# devise seule comme unité.
+PRICE_UNIT = f"EUR/{UnitOfEnergy.KILO_WATT_HOUR}"
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -58,12 +64,15 @@ def _iso(value: date | None) -> str | None:
     return value.isoformat() if value else None
 
 
-def _day_attrs(day: DayColor) -> dict[str, Any]:
+def _day_attrs(data: TempoData, day: DayColor) -> dict[str, Any]:
+    tariff = data.day_tariff(day)
     return {
         "date": _iso(day.date),
         "code": day.code,
         "officielle": day.color is not None,
         "fiabilite": FIABILITE_OFFICIELLE if day.color is not None else None,
+        "prix_hp": tariff.hp if tariff else None,
+        "prix_hc": tariff.hc if tariff else None,
     }
 
 
@@ -72,9 +81,22 @@ def _now_paris() -> datetime:
 
 
 def _current_attrs(data: TempoData) -> dict[str, Any]:
-    attrs = _day_attrs(data.current_day(_now_paris()))
+    attrs = _day_attrs(data, data.current_day(_now_paris()))
     attrs.pop("code", None)
     return attrs
+
+
+def _price_attrs(data: TempoData) -> dict[str, Any]:
+    now = _now_paris()
+    day = data.current_day(now)
+    grid = data.tarifs
+    return {
+        "periode": period_for(now),
+        "couleur": day.color,
+        "date": _iso(day.date),
+        "grille": grid.as_dict() if grid else None,
+        "date_effet": _iso(grid.date_effet) if grid else None,
+    }
 
 
 def _forecast_attrs(data: TempoData, days: int) -> dict[str, Any]:
@@ -148,7 +170,7 @@ SENSORS: tuple[TempoSensorDescription, ...] = (
         device_class=SensorDeviceClass.ENUM,
         options=list(COLORS),
         value_fn=lambda data: data.today.color,
-        attrs_fn=lambda data: _day_attrs(data.today),
+        attrs_fn=lambda data: _day_attrs(data, data.today),
     ),
     TempoSensorDescription(
         key="couleur_actuelle",
@@ -167,12 +189,25 @@ SENSORS: tuple[TempoSensorDescription, ...] = (
         always_available=True,
     ),
     TempoSensorDescription(
+        key="prix_kwh_actuel",
+        translation_key="prix_kwh_actuel",
+        native_unit_of_measurement=PRICE_UNIT,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
+        value_fn=lambda data: data.current_price(_now_paris()),
+        attrs_fn=_price_attrs,
+        # Calcul local (heure + couleurs et grille déjà reçues) : le prix reste
+        # disponible pendant une panne de l'API, pour le tableau de bord Énergie.
+        # Il devient inconnu dès que la couleur de la journée Tempo n'est pas connue.
+        always_available=True,
+    ),
+    TempoSensorDescription(
         key="couleur_demain",
         translation_key="couleur_demain",
         device_class=SensorDeviceClass.ENUM,
         options=list(COLORS),
         value_fn=lambda data: data.tomorrow.color,
-        attrs_fn=lambda data: _day_attrs(data.tomorrow),
+        attrs_fn=lambda data: _day_attrs(data, data.tomorrow),
     ),
     *(_forecast_description(days, enabled=True) for days in FORECAST_HORIZONS),
     *(_forecast_description(days, enabled=False) for days in INDICATIVE_HORIZONS),

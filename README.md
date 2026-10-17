@@ -3,7 +3,7 @@
 [![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=thomasissa-png&repository=ha-calendrier-tempo&category=integration)
 [![Validation](https://github.com/thomasissa-png/ha-calendrier-tempo/actions/workflows/validate.yml/badge.svg)](https://github.com/thomasissa-png/ha-calendrier-tempo/actions/workflows/validate.yml)
 
-Intégration Home Assistant qui ajoute la **couleur Tempo EDF** du jour et de demain, les prévisions jusqu'à 15 jours, un calendrier des jours blancs et rouges, le prochain jour rouge et blanc et les jours rouges et blancs restants dans la saison.
+Intégration Home Assistant qui ajoute la **couleur Tempo EDF** du jour et de demain, les prévisions jusqu'à 15 jours, un calendrier des jours blancs et rouges, le prochain jour rouge et blanc, les jours rouges et blancs restants dans la saison et le **prix du kWh actuel**, prêt pour le tableau de bord Énergie.
 
 Les données viennent de l'[API publique et gratuite de calendrier-tempo.fr](https://www.calendrier-tempo.fr/api-tempo) : aucun compte, aucune clé, rien à configurer.
 
@@ -49,6 +49,7 @@ Toutes les entités sont regroupées sous un appareil « Calendrier Tempo EDF »
 | `sensor.calendrier_tempo_couleur_aujourd_hui` | `bleu`, `blanc` ou `rouge` | officielle | oui |
 | `sensor.calendrier_tempo_couleur_actuelle` | couleur qui s'applique maintenant : celle de la veille jusqu'à 6 h | officielle | oui |
 | `sensor.calendrier_tempo_periode` | `hp` (heures pleines, 6 h à 22 h) ou `hc` (heures creuses) | heure de Paris | oui |
+| `sensor.calendrier_tempo_prix_kwh_actuel` | « Prix du kWh actuel » en EUR/kWh TTC : heures pleines ou creuses de la couleur de la journée Tempo en cours | grille publiée par l'API | oui |
 | `sensor.calendrier_tempo_couleur_demain` | `bleu`, `blanc` ou `rouge`, inconnu tant qu'EDF n'a pas annoncé | officielle | oui |
 | `sensor.calendrier_tempo_prevision_j2` à `_j5` | couleur prévue dans 2, 3, 4 ou 5 jours | fiable | oui |
 | `sensor.calendrier_tempo_prevision_j6` à `_j15` | couleur prévue dans 6 à 15 jours | indicative | **non** |
@@ -73,7 +74,8 @@ Les textes des événements suivent la langue de Home Assistant (français, sino
 ### Attributs
 
 - Prévisions J+2 à J+15 : `date`, `fiabilite`, `officielle`, `probabilite_bleu`, `probabilite_blanc`, `probabilite_rouge` (entre 0 et 1), `score_risque`, `temp_min_prevue`, `temp_max_prevue`, `temp_moy_prevue`, `raison`.
-- Couleur aujourd'hui et demain : `date`, `code` (1, 2, 3), `officielle`, `fiabilite`. Couleur actuelle : `date` (journée Tempo en cours), `officielle`, `fiabilite`.
+- Couleur aujourd'hui et demain : `date`, `code` (1, 2, 3), `officielle`, `fiabilite`, `prix_hp`, `prix_hc` (EUR/kWh de cette couleur). Couleur actuelle : `date` (journée Tempo en cours), `officielle`, `fiabilite`, `prix_hp`, `prix_hc`.
+- Prix du kWh actuel : `periode` (`hp` ou `hc`), `couleur`, `date` (journée Tempo en cours), `grille` (prix `hp` et `hc` des trois couleurs), `date_effet` (date d'entrée en vigueur de la grille).
 - Prochain jour rouge ou blanc : `rouge_prevu` ou `blanc_prevu` (vrai ou faux), `jours_avant`, `officielle`, `fiabilite` et les probabilités.
 - Prévisions 15 jours : `horizon_jours` (15 en temps normal), `jours_blancs`, `jours_rouges_officiels`, `generee_le`, et `previsions`, la liste complète, un élément par jour : `date`, `jour` (0 = aujourd'hui), `couleur`, `officielle`, `fiabilite`, `probabilite_bleu`, `probabilite_blanc`, `probabilite_rouge`. Cette liste n'est pas enregistrée dans l'historique, pour ne pas alourdir la base.
 - Jours restants : `total_saison`, `debut_saison`, `fin_saison`, `source` (`edf` ou `calcul`).
@@ -81,6 +83,23 @@ Les textes des événements suivent la langue de Home Assistant (français, sino
 Les couleurs sont stockées en minuscules (`bleu`, `blanc`, `rouge`) et affichées « Bleu », « Blanc », « Rouge ». Dans vos automatisations, comparez toujours avec la valeur en minuscules. Un jour officiel a une probabilité de 1 pour sa couleur, 0 pour les autres.
 
 Rafraîchissement (heure de Paris) : toutes les 30 minutes (4 petites requêtes), à 0 h 05 pour le changement de jour, et à 11 h 35 pour récupérer la couleur de demain annoncée par EDF. Si les prévisions ou les jours restants ne répondent pas, les dernières valeurs reçues sont conservées 24 h au plus et les couleurs officielles restent à jour. Si les couleurs officielles ne répondent pas, les entités passent « indisponibles ». Après un échec, une seule nouvelle tentative a lieu 5 minutes plus tard, puis le cycle de 30 minutes reprend, sans relance en rafale.
+
+## Prix du kWh et tableau de bord Énergie
+
+Le capteur `sensor.calendrier_tempo_prix_kwh_actuel` donne le prix du kWh qui s'applique maintenant, en EUR/kWh TTC (prix du kWh seul, hors abonnement) :
+
+- de 6 h à 22 h, le prix heures pleines de la couleur du jour ;
+- de 22 h à 6 h, le prix heures creuses ; entre minuit et 6 h, c'est la couleur de la veille qui s'applique, car la journée Tempo court de 6 h à 6 h.
+
+Le prix est recalculé dans Home Assistant à 6 h, 22 h et minuit, sans requête supplémentaire. Les prix viennent de la grille publiée par l'API de calendrier-tempo.fr : l'intégration n'en contient aucun. Tant que l'API ne publie pas cette grille, ou si la couleur de la journée Tempo n'est pas connue, le capteur reste « inconnu ». Pendant une panne de l'API, il continue d'être calculé avec les dernières données reçues (grille gardée 24 h au plus).
+
+Pour l'utiliser dans le tableau de bord Énergie :
+
+1. Ouvrez **Paramètres > Tableaux de bord > Énergie**.
+2. Dans **Réseau électrique**, modifiez votre consommation (ou ajoutez-la).
+3. Choisissez **Utiliser une entité avec le prix actuel**, puis `sensor.calendrier_tempo_prix_kwh_actuel`.
+
+Home Assistant calcule alors le coût de votre consommation au prix de la couleur et de la période en cours. Le capteur a pour unité `EUR/kWh` et une classe d'état `measurement` : son historique est conservé dans les statistiques.
 
 ## Exemples
 
