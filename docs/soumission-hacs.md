@@ -110,5 +110,6 @@ Conserver la ligne de commentaire `<!-- tid:... -->` du modèle si GitHub la pr�
 - Délai annoncé par HACS : plusieurs mois. Suivi : https://github.com/hacs/default/pulls (ou la page
   « backlog » citée par la documentation). Si la PR passe en brouillon, corriger puis la remettre
   « Ready for review ».
-- Une fois la PR fusionnée : retirer du README l'étape « dépôt personnalisé » (section Installation)
-  et mettre à jour la page https://www.calendrier-tempo.fr/domotique.
+- PR hacs/default #12127 fusionnée le 24/10/2026 : l'intégration est dans le catalogue par défaut.
+  Fait le 24/10 : README (installation par la recherche HACS, dépôt personnalisé gardé en secours)
+  et page https://www.calendrier-tempo.fr/domotique.

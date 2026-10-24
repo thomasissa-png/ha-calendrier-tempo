@@ -21,15 +21,21 @@ Une prévision pour demain, tant qu'EDF n'a pas annoncé la couleur, est marqué
 
 ### Avec HACS (recommandé)
 
-Tant que l'intégration n'est pas dans le catalogue par défaut de HACS, ajoutez ce dépôt comme dépôt personnalisé :
+L'intégration est dans le catalogue par défaut de HACS :
 
-1. Dans Home Assistant, ouvrez **HACS**, puis le menu (trois points en haut à droite) et **Dépôts personnalisés**.
-2. Collez l'adresse `https://github.com/thomasissa-png/ha-calendrier-tempo`, choisissez le type **Intégration**, puis **Ajouter**.
-3. Recherchez **Calendrier Tempo EDF** dans HACS, cliquez sur **Télécharger**.
-4. Redémarrez Home Assistant.
-5. Allez dans **Paramètres > Appareils et services > Ajouter une intégration**, cherchez **Calendrier Tempo EDF** et validez.
+1. Dans Home Assistant, ouvrez **HACS** et recherchez **Calendrier Tempo EDF**, puis cliquez sur **Télécharger**.
+2. Redémarrez Home Assistant.
+3. Allez dans **Paramètres > Appareils et services > Ajouter une intégration**, cherchez **Calendrier Tempo EDF** et validez.
 
-Le bouton « Ouvrir dans HACS » en haut de cette page fait les étapes 1 à 3 pour vous. Une fois l'intégration acceptée dans le catalogue par défaut de HACS, l'étape 2 ne sera plus nécessaire.
+Le bouton « Ouvrir dans HACS » en haut de cette page ouvre directement la fiche de l'intégration.
+
+#### Si l'intégration n'apparaît pas dans la recherche
+
+Ajoutez ce dépôt comme dépôt personnalisé, en solution de secours :
+
+1. Dans **HACS**, ouvrez le menu (trois points en haut à droite), puis **Dépôts personnalisés**.
+2. Collez l'adresse `https://github.com/thomasissa-png/ha-calendrier-tempo`.
+3. Choisissez le type **Intégration**, puis **Ajouter**.
 
 ### Installation manuelle
 
