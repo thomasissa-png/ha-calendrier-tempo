@@ -36,6 +36,7 @@ Ajoutez ce dépôt comme dépôt personnalisé, en solution de secours :
 1. Dans **HACS**, ouvrez le menu (trois points en haut à droite), puis **Dépôts personnalisés**.
 2. Collez l'adresse `https://github.com/thomasissa-png/ha-calendrier-tempo`.
 3. Choisissez le type **Intégration**, puis **Ajouter**.
+4. Puis recherchez **Calendrier Tempo EDF** et suivez les étapes 1 à 3 ci-dessus.
 
 ### Installation manuelle
 
