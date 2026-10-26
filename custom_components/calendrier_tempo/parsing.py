@@ -97,14 +97,12 @@ def hesitates(p1: float | None, p2: float | None) -> bool:
 
 
 def uncertainty_label(color: str, second: str | None, trend: bool, official: bool) -> str:
-    """Libellé du site : « Blanc », « Blanc ou bleu ? », « Tendance blanc »,
-    « Tendance : blanc ou bleu ? »."""
-    if official or not (second or trend):
+    """Libellé du site : « Blanc » ou « Blanc ou bleu ? », jamais « Tendance » (2026-10-26).
+    `trend` est gardé pour la signature : l'échéance lointaine reste dans l'attribut fiabilite."""
+    if official or not second:
         return color.capitalize()
-    if second:
-        pair = f"{color} ou {second}{NBSP}?"
-        return f"Tendance{NBSP}: {pair}" if trend else pair[0].upper() + pair[1:]
-    return f"Tendance {color}"
+    pair = f"{color} ou {second}{NBSP}?"
+    return pair[0].upper() + pair[1:]
 
 
 def fiabilite_for(offset: int, official: bool) -> str:

@@ -81,7 +81,7 @@ Les textes des événements suivent la langue de Home Assistant (français, sino
 
 ### Attributs
 
-- Prévisions J+2 à J+15 : `date`, `fiabilite`, `officielle`, `probabilite_bleu`, `probabilite_blanc`, `probabilite_rouge` (entre 0 et 1), `score_risque`, `temp_min_prevue`, `temp_max_prevue`, `temp_moy_prevue`, `raison`, `hesitation` (vrai ou faux), `seconde_couleur` (vide sans hésitation) et `libelle` (texte du site, par exemple « Blanc ou bleu ? » ou « Tendance blanc »).
+- Prévisions J+2 à J+15 : `date`, `fiabilite`, `officielle`, `probabilite_bleu`, `probabilite_blanc`, `probabilite_rouge` (entre 0 et 1), `score_risque`, `temp_min_prevue`, `temp_max_prevue`, `temp_moy_prevue`, `raison`, `hesitation` (vrai ou faux), `seconde_couleur` (vide sans hésitation) et `libelle` (texte du site, par exemple « Blanc ou bleu ? » ou « Blanc »).
 - Couleur aujourd'hui et demain : `date`, `code` (1, 2, 3), `officielle`, `fiabilite`, `prix_hp`, `prix_hc` (EUR/kWh de cette couleur). Couleur actuelle : `date` (journée Tempo en cours), `officielle`, `fiabilite`, `prix_hp`, `prix_hc`.
 - Prix du kWh actuel : `periode` (`hp` ou `hc`), `couleur`, `date` (journée Tempo en cours), `grille` (prix `hp` et `hc` des trois couleurs), `date_effet` (date d'entrée en vigueur de la grille).
 - Prochain jour rouge ou blanc : `rouge_prevu` ou `blanc_prevu` (vrai ou faux), `jours_avant`, `officielle`, `fiabilite` et les probabilités.

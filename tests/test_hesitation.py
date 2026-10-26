@@ -154,8 +154,11 @@ def test_parse_keeps_api_fields_out_of_attributes() -> None:
 
 
 def test_trend_labels() -> None:
-    assert _day(8, "blanc", HESITANT).libelle == f"Tendance{NBSP}: blanc ou bleu{NBSP}?"
-    assert _day(8, "blanc", NET).libelle == "Tendance blanc"
+    # Jamais « Tendance » dans le libellé (décision du 2026-10-26) : l'échéance lointaine
+    # reste portée par l'attribut tendance / fiabilite.
+    assert _day(8, "blanc", HESITANT).libelle == f"Blanc ou bleu{NBSP}?"
+    assert _day(8, "blanc", NET).libelle == "Blanc"
+    assert "Tendance" not in _day(8, "rouge", HESITANT).libelle
     assert _day(8, "blanc", NET).tendance is True
     assert _day(5, "blanc", NET).tendance is False
 
