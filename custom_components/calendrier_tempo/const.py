@@ -7,7 +7,7 @@ from typing import Final
 
 DOMAIN: Final = "calendrier_tempo"
 NAME: Final = "Calendrier Tempo EDF"
-VERSION: Final = "0.3.0"
+VERSION: Final = "0.3.1"
 
 SITE_URL: Final = "https://www.calendrier-tempo.fr/"
 API_BASE_URL: Final = "https://www.calendrier-tempo.fr/api"

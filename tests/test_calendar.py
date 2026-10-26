@@ -58,13 +58,15 @@ async def test_calendar_events_whole_horizon(
         datetime(2027, 1, 1, tzinfo=PARIS),
     )
     # Jours bleus exclus : blanc 7 (officiel), blanc 9, rouges 10 et 11, blanc 12, rouge 15.
+    # 0.3.1 : les probabilités de la fixture (bleu 20 %, blanc 30 %, rouge 50 %) sont une
+    # hésitation selon la règle du site (écart < 30 points, seconde > 15 %).
     assert [(e["start"], e["summary"]) for e in events] == [
         ("2026-12-07", "Jour blanc (officiel)"),
-        ("2026-12-09", "Jour blanc prévu (probabilité 30 %)"),
-        ("2026-12-10", "Jour rouge prévu (probabilité 50 %)"),
-        ("2026-12-11", "Jour rouge prévu (probabilité 50 %)"),
-        ("2026-12-12", "Jour blanc prévu (probabilité 30 %)"),
-        ("2026-12-15", "Jour rouge prévu (probabilité 41 %)"),
+        ("2026-12-09", "Jour blanc ou rouge ? (30 %)"),
+        ("2026-12-10", "Jour rouge ou blanc ? (50 %)"),
+        ("2026-12-11", "Jour rouge ou blanc ? (50 %)"),
+        ("2026-12-12", "Jour blanc ou rouge ? (30 %)"),
+        ("2026-12-15", "Jour rouge ou blanc ? (41 %)"),
     ]
     # Événements « journée entière » : fin = lendemain.
     for e in events:
@@ -74,6 +76,7 @@ async def test_calendar_events_whole_horizon(
     assert official["description"] == "Couleur officielle publiée par EDF."
     assert j3["description"].splitlines() == [
         "Prévision calendrier-tempo.fr à J+3, dans la zone la plus fiable (J+2 à J+5).",
+        "Hésitation entre rouge (50 %) et blanc (30 %) : les deux restent possibles.",
         "Probabilités : bleu 20 %, blanc 30 %, rouge 50 %.",
         "Température moyenne prévue : 1,1 °C.",
         "Seule la couleur publiée par EDF fait foi.",
@@ -123,7 +126,7 @@ async def test_calendar_off_on_blue_day_shows_next_event(
     await _setup(hass, freezer)
     state = hass.states.get(ENTITY_ID)
     assert state.state == "off"
-    assert state.attributes["message"] == "Jour rouge prévu (probabilité 50 %)"
+    assert state.attributes["message"] == "Jour rouge ou blanc ? (50 %)"
     assert state.attributes["all_day"] is True
     assert state.attributes["start_time"].startswith("2026-12-10")
 
@@ -162,7 +165,7 @@ async def test_calendar_english(
         datetime(2026, 12, 10, tzinfo=PARIS),
         datetime(2026, 12, 11, tzinfo=PARIS),
     )
-    assert events[0]["summary"] == "Red day forecast (50% probability)"
+    assert events[0]["summary"] == "Red or white day? (50%)"
     assert "Only the color published by EDF is authoritative." in events[0]["description"]
     assert hass.states.get(ENTITY_ID).attributes["message"] == "White day (official)"
 

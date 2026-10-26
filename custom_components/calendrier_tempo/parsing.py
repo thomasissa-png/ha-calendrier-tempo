@@ -26,6 +26,14 @@ FIABILITE_FIABLE = "fiable"
 FIABILITE_INDICATIVE = "indicative"
 HORIZON_FIABLE_MAX = 5
 
+# Hésitation, même règle que le site (incertitude.py) : écart entre la probabilité de la
+# couleur prévue et celle de la seconde couleur (la plus probable des deux autres)
+# inférieur à 0,30 ET seconde couleur au-dessus de 0,15. Jamais pour un jour officiel.
+HESITATION_ECART = 0.30
+HESITATION_SECONDE = 0.15
+# Espace insécable avant « ? » et « : » dans le libellé (typographie du site).
+NBSP = " "  # U+00A0
+
 # Champs d'une prévision repris tels quels en attributs, uniquement s'ils existent.
 PREDICTION_ATTRIBUTES = (
     "probabilite_bleu",
@@ -38,6 +46,8 @@ PREDICTION_ATTRIBUTES = (
     "raison",
     "confirmed",
 )
+# Champs d'incertitude ajoutés à /api/predictions le 2026-10-26 (absents des anciennes réponses).
+UNCERTAINTY_FIELDS = ("hesitation", "seconde_couleur", "tendance", "libelle")
 
 
 class ApiDataError(ValueError):
@@ -72,6 +82,29 @@ def period_for(now_paris: datetime) -> str:
     if TEMPO_DAY_START_HOUR <= now_paris.hour < PEAK_END_HOUR:
         return PERIOD_PEAK
     return PERIOD_OFF_PEAK
+
+
+def percent(value: float) -> int:
+    """Arrondi « demi vers le haut », comme le site : 0,505 -> 51, 0,285 -> 29."""
+    return int(math.floor(round(value * 100, 9) + 0.5))
+
+
+def hesitates(p1: float | None, p2: float | None) -> bool:
+    """Écart < 0,30 et seconde > 0,15 (écart arrondi : 0,70 - 0,40 vaut bien 0,30)."""
+    if p1 is None or p2 is None:
+        return False
+    return round(p1 - p2, 9) < HESITATION_ECART and p2 > HESITATION_SECONDE
+
+
+def uncertainty_label(color: str, second: str | None, trend: bool, official: bool) -> str:
+    """Libellé du site : « Blanc », « Blanc ou bleu ? », « Tendance blanc »,
+    « Tendance : blanc ou bleu ? »."""
+    if official or not (second or trend):
+        return color.capitalize()
+    if second:
+        pair = f"{color} ou {second}{NBSP}?"
+        return f"Tendance{NBSP}: {pair}" if trend else pair[0].upper() + pair[1:]
+    return f"Tendance {color}"
 
 
 def fiabilite_for(offset: int, official: bool) -> str:
@@ -126,6 +159,8 @@ class Prediction:
     date: date
     color: str
     attributes: dict[str, Any] = field(default_factory=dict)
+    # Champs d'incertitude bruts de l'API (UNCERTAINTY_FIELDS), s'ils existent.
+    uncertainty: dict[str, Any] = field(default_factory=dict)
 
     @property
     def confirmed(self) -> bool:
@@ -141,10 +176,67 @@ class ForecastDay:
     color: str
     official: bool
     attributes: dict[str, Any] = field(default_factory=dict)
+    uncertainty: dict[str, Any] = field(default_factory=dict)
 
     @property
     def fiabilite(self) -> str:
         return fiabilite_for(self.offset, self.official)
+
+    @property
+    def tendance(self) -> bool:
+        """Prévision au-delà de J+5 : une tendance (calcul local, toujours à jour)."""
+        return not self.official and self.offset > HORIZON_FIABLE_MAX
+
+    def _api_second_color(self) -> tuple[bool, str | None]:
+        """(champs de l'API exploitables ?, seconde couleur si hésitation)."""
+        flag = self.uncertainty.get("hesitation")
+        if not isinstance(flag, bool):
+            return False, None
+        if not flag:
+            return True, None
+        second = normalize_color(self.uncertainty.get("seconde_couleur"))
+        if second is None or second == self.color:
+            return False, None
+        return True, second
+
+    def second_color(self) -> str | None:
+        """Seconde couleur en cas d'hésitation, sinon None (jamais pour un jour officiel).
+
+        Champs `hesitation` et `seconde_couleur` de l'API s'ils sont présents et
+        cohérents, sinon même calcul que le site à partir des probabilités.
+        """
+        if self.official:
+            return None
+        usable, second = self._api_second_color()
+        if usable:
+            return second
+        others = [
+            (c, p) for c in COLORS if c != self.color and (p := self.probability(c)) is not None
+        ]
+        if not others:
+            return None
+        # À égalité, ordre stable bleu, blanc, rouge (comme le site).
+        second, p2 = max(others, key=lambda item: item[1])
+        return second if hesitates(self.probability(self.color), p2) else None
+
+    @property
+    def hesitation(self) -> bool:
+        return self.second_color() is not None
+
+    @property
+    def libelle(self) -> str:
+        """Libellé du site (« Blanc ou bleu ? »...) : celui de l'API s'il est cohérent."""
+        api_label = self.uncertainty.get("libelle")
+        api_trend = self.uncertainty.get("tendance")
+        if (
+            not self.official
+            and isinstance(api_label, str)
+            and api_label.strip()
+            and self._api_second_color()[0]
+            and (not isinstance(api_trend, bool) or api_trend == self.tendance)
+        ):
+            return api_label
+        return uncertainty_label(self.color, self.second_color(), self.tendance, self.official)
 
     def probability(self, color: str) -> float | None:
         """Probabilité (0 à 1) d'une couleur ; 1 ou 0 pour un jour officiel."""
@@ -383,7 +475,10 @@ def parse_predictions(payload: Any) -> tuple[Prediction, ...]:
         if day is None or color is None or day in result:
             continue
         attributes = {key: item[key] for key in PREDICTION_ATTRIBUTES if key in item}
-        result[day] = Prediction(date=day, color=color, attributes=attributes)
+        uncertainty = {key: item[key] for key in UNCERTAINTY_FIELDS if key in item}
+        result[day] = Prediction(
+            date=day, color=color, attributes=attributes, uncertainty=uncertainty
+        )
     return tuple(sorted(result.values(), key=lambda p: p.date))
 
 
@@ -409,6 +504,7 @@ def build_forecast_days(
             color=p.color,
             official=p.confirmed,
             attributes=dict(p.attributes),
+            uncertainty=dict(p.uncertainty),
         )
     for day, color in official.items():
         if day < reference_date:

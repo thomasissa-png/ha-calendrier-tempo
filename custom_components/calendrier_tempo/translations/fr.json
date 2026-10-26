@@ -118,6 +118,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -136,6 +150,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -154,6 +182,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -172,6 +214,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -190,6 +246,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -208,6 +278,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -226,6 +310,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -244,6 +342,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -262,6 +374,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -280,6 +406,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -298,6 +438,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -316,6 +470,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -334,6 +502,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },
@@ -352,6 +534,20 @@
               "fiable": "Zone la plus fiable",
               "indicative": "Tendance indicative"
             }
+          },
+          "hesitation": {
+            "name": "Hésitation"
+          },
+          "seconde_couleur": {
+            "name": "Seconde couleur",
+            "state": {
+              "bleu": "Bleu",
+              "blanc": "Blanc",
+              "rouge": "Rouge"
+            }
+          },
+          "libelle": {
+            "name": "Libellé"
           }
         }
       },

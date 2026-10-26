@@ -108,6 +108,11 @@ def _forecast_attrs(data: TempoData, days: int) -> dict[str, Any]:
     }
     if day is not None:
         attrs.update(day.attributes)
+        # Ajouts 0.3.1, comme sur le site : l'état (la couleur prévue) ne change pas.
+        second = day.second_color()
+        attrs["hesitation"] = second is not None
+        attrs["seconde_couleur"] = second
+        attrs["libelle"] = day.libelle
     return attrs
 
 

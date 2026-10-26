@@ -23,6 +23,7 @@ from .parsing import (
     COLORS,
     FIABILITE_FIABLE,
     ForecastDay,
+    percent,
 )
 
 PARALLEL_UPDATES = 0
@@ -38,10 +39,17 @@ TEXTS = {
         "official": "Jour {color} (officiel)",
         "forecast": "Jour {color} prévu",
         "forecast_proba": "Jour {color} prévu (probabilité {pct} %)",
+        "hesitation": "Jour {color} ou {second} ?",
+        "hesitation_proba": "Jour {color} ou {second} ? ({pct} %)",
         "desc_official": "Couleur officielle publiée par EDF.",
         "desc_pending": "Prévision calendrier-tempo.fr à J+{n}, en attendant l'annonce d'EDF.",
         "desc_fiable": "Prévision calendrier-tempo.fr à J+{n}, dans la zone la plus fiable (J+2 à J+5).",
         "desc_indicative": "Prévision calendrier-tempo.fr à J+{n} : tendance indicative (6 à 15 jours).",
+        "desc_hesitation": "Hésitation entre {color} et {second} : les deux restent possibles.",
+        "desc_hesitation_probas": (
+            "Hésitation entre {color} ({pct} %) et {second} ({pct2} %) : "
+            "les deux restent possibles."
+        ),
         "desc_probas": "Probabilités : {probas}.",
         "desc_temp": "Température moyenne prévue : {temp} °C.",
         "desc_disclaimer": "Seule la couleur publiée par EDF fait foi.",
@@ -52,10 +60,16 @@ TEXTS = {
         "official": "{Color} day (official)",
         "forecast": "{Color} day forecast",
         "forecast_proba": "{Color} day forecast ({pct}% probability)",
+        "hesitation": "{Color} or {second} day?",
+        "hesitation_proba": "{Color} or {second} day? ({pct}%)",
         "desc_official": "Official color published by EDF.",
         "desc_pending": "calendrier-tempo.fr forecast at D+{n}, until EDF announces the color.",
         "desc_fiable": "calendrier-tempo.fr forecast at D+{n}, in the most reliable range (D+2 to D+5).",
         "desc_indicative": "calendrier-tempo.fr forecast at D+{n}: indicative trend (6 to 15 days).",
+        "desc_hesitation": "Hesitation between {color} and {second}: both remain possible.",
+        "desc_hesitation_probas": (
+            "Hesitation between {color} ({pct}%) and {second} ({pct2}%): both remain possible."
+        ),
         "desc_probas": "Probabilities: {probas}.",
         "desc_temp": "Forecast mean temperature: {temp} °C.",
         "desc_disclaimer": "Only the color published by EDF is authoritative.",
@@ -65,7 +79,8 @@ TEXTS = {
 
 
 def _pct(value: float) -> int:
-    return round(value * 100)
+    # Arrondi « demi vers le haut », le même que le site (0,505 -> 51 %).
+    return percent(value)
 
 
 def _format_temp(value: object, lang: str) -> str | None:
@@ -81,14 +96,19 @@ def build_event(day: ForecastDay, lang: str = "fr") -> CalendarEvent:
     color_name = texts["colors"][day.color]
     names = {"color": color_name, "Color": color_name.capitalize()}
     probability = day.probability(day.color)
+    # Jour officiel : jamais d'hésitation (second_color renvoie None).
+    second = day.second_color()
+    if second is not None:
+        names["second"] = texts["colors"][second]
     if day.official:
         summary = texts["official"].format(**names)
         lines = [texts["desc_official"]]
     else:
+        prefix = "hesitation" if second is not None else "forecast"
         if probability is None:
-            summary = texts["forecast"].format(**names)
+            summary = texts[prefix].format(**names)
         else:
-            summary = texts["forecast_proba"].format(pct=_pct(probability), **names)
+            summary = texts[f"{prefix}_proba"].format(pct=_pct(probability), **names)
         if day.offset < FIRST_FORECAST_DAY:
             key = "desc_pending"
         elif day.fiabilite == FIABILITE_FIABLE:
@@ -96,6 +116,16 @@ def build_event(day: ForecastDay, lang: str = "fr") -> CalendarEvent:
         else:
             key = "desc_indicative"
         lines = [texts[key].format(n=day.offset)]
+        if second is not None:
+            p2 = day.probability(second)
+            if probability is None or p2 is None:
+                lines.append(texts["desc_hesitation"].format(**names))
+            else:
+                lines.append(
+                    texts["desc_hesitation_probas"].format(
+                        pct=_pct(probability), pct2=_pct(p2), **names
+                    )
+                )
         probas = [
             texts["proba_item"].format(color=texts["colors"][c], pct=_pct(p))
             for c in COLORS

@@ -118,6 +118,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -136,6 +150,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -154,6 +182,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -172,6 +214,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -190,6 +246,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -208,6 +278,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -226,6 +310,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -244,6 +342,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -262,6 +374,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -280,6 +406,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -298,6 +438,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -316,6 +470,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -334,6 +502,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
@@ -352,6 +534,20 @@
               "fiable": "Most reliable range",
               "indicative": "Indicative trend"
             }
+          },
+          "hesitation": {
+            "name": "Hesitation"
+          },
+          "seconde_couleur": {
+            "name": "Second color",
+            "state": {
+              "bleu": "Blue",
+              "blanc": "White",
+              "rouge": "Red"
+            }
+          },
+          "libelle": {
+            "name": "Label"
           }
         }
       },
