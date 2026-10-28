@@ -74,14 +74,14 @@ Les capteurs J+6 à J+15 sont créés mais désactivés : tout l'horizon est dé
 
 - `Jour rouge (officiel)`, `Jour blanc (officiel)` : couleur publiée par EDF.
 - `Jour rouge prévu (probabilité 62 %)`, `Jour blanc prévu (probabilité 40 %)` : prévision. La description précise l'échéance (J+N), la fiabilité, les trois probabilités et la température moyenne prévue.
-- `Jour blanc ou bleu ? (50 %)` : prévision hésitante, quand la deuxième couleur la plus probable est à moins de 30 points de la couleur prévue (et au-dessus de 15 %), comme sur calendrier-tempo.fr. La description donne les deux probabilités.
+- `Jour blanc ou rouge ? (50 %)` : prévision hésitante, quand un jour rouge est possible et que la deuxième couleur la plus probable est à moins de 30 points de la couleur prévue (et au-dessus de 15 %), comme sur calendrier-tempo.fr. Entre blanc et bleu, la couleur la plus probable est donnée seule, avec son pourcentage. La description donne les deux probabilités.
 - Les jours bleus, couleur par défaut d'environ 300 jours par an, ne créent pas d'événement. Le calendrier est donc « activé » (`on`) uniquement un jour blanc ou rouge, et les déclencheurs de calendrier ne réagissent qu'aux jours qui coûtent cher. Un calendrier vide signifie qu'aucun jour blanc ou rouge n'est prévu sur l'horizon (ou que les données sont indisponibles).
 
 Les textes des événements suivent la langue de Home Assistant (français, sinon anglais).
 
 ### Attributs
 
-- Prévisions J+2 à J+15 : `date`, `fiabilite`, `officielle`, `probabilite_bleu`, `probabilite_blanc`, `probabilite_rouge` (entre 0 et 1), `score_risque`, `temp_min_prevue`, `temp_max_prevue`, `temp_moy_prevue`, `raison`, `hesitation` (vrai ou faux), `seconde_couleur` (vide sans hésitation) et `libelle` (texte du site, par exemple « Blanc ou bleu ? » ou « Blanc »).
+- Prévisions J+2 à J+15 : `date`, `fiabilite`, `officielle`, `probabilite_bleu`, `probabilite_blanc`, `probabilite_rouge` (entre 0 et 1), `score_risque`, `temp_min_prevue`, `temp_max_prevue`, `temp_moy_prevue`, `raison`, `hesitation` (vrai ou faux), `seconde_couleur` (vide sans hésitation) et `libelle` (texte du site, par exemple « Blanc ou rouge ? » ou « Blanc »).
 - Couleur aujourd'hui et demain : `date`, `code` (1, 2, 3), `officielle`, `fiabilite`, `prix_hp`, `prix_hc` (EUR/kWh de cette couleur). Couleur actuelle : `date` (journée Tempo en cours), `officielle`, `fiabilite`, `prix_hp`, `prix_hc`.
 - Prix du kWh actuel : `periode` (`hp` ou `hc`), `couleur`, `date` (journée Tempo en cours), `grille` (prix `hp` et `hc` des trois couleurs), `date_effet` (date d'entrée en vigueur de la grille).
 - Prochain jour rouge ou blanc : `rouge_prevu` ou `blanc_prevu` (vrai ou faux), `jours_avant`, `officielle`, `fiabilite` et les probabilités.
