@@ -1,0 +1,32 @@
+# Met à jour le texte d'une release GitHub existante depuis .github/release-notes/<tag>.md (main).
+# GitHub : Actions -> Release notes -> « Run workflow », tag de la version (ex. v0.3.1).
+# Sert à ajouter une note datée à une version déjà publiée, sans en créer une nouvelle.
+name: Release notes
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag de la release existante (vX.Y.Z)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Update the release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Tag invalide : $TAG"; exit 1; }
+          notes=".github/release-notes/${TAG}.md"
+          test -f "$notes" || { echo "Notes absentes : $notes"; exit 1; }
+          gh release edit "$TAG" --notes-file "$notes"
